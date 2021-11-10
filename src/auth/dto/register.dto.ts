@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotCommonPassword } from '../common-password.validator';
 
 export class RegisterDto {
   @IsString()
@@ -10,5 +11,6 @@ export class RegisterDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsNotCommonPassword()
   password: string;
 }
