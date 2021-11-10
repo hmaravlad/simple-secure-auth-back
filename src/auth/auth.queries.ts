@@ -13,7 +13,6 @@ export class AuthQueries {
       const id = parseInt(
         (await trx('password').insert(password).returning('id'))[0],
       );
-      console.dir({ id, type: typeof id });
       await trx('user').insert({ ...user, password_id: id });
     });
   }
