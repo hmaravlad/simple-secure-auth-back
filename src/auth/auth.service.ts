@@ -15,5 +15,4 @@ export class AuthService {
   logout() {
     return `Logout`;
   }
-
 }
