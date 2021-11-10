@@ -5,10 +5,12 @@ import { CommonPasswordsProvider } from './common-passwords.provider';
 import { IsNotCommonPasswordValidator } from './common-password.validator';
 import { ConfigService } from '@nestjs/config';
 import { getConfig } from 'src/config/configuration';
+import { AuthQueries } from './auth.queries';
 
 @Module({
   controllers: [AuthController],
   providers: [
+    AuthQueries,
     AuthService,
     {
       provide: CommonPasswordsProvider,
