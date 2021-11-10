@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { IsNotCommonPassword } from '../common-password.validator';
+import { IsNotCommonPassword } from '../validators/common-password.validator';
+import { IsUniqueEmail } from '../validators/is-unique-email.validator';
 
 export class RegisterDto {
   @IsString()
@@ -7,6 +8,7 @@ export class RegisterDto {
   name: string;
 
   @IsEmail()
+  @IsUniqueEmail()
   email: string;
 
   @IsString()
