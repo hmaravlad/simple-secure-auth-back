@@ -1,22 +1,22 @@
 import { ConfigService } from '@nestjs/config';
 
-export interface AppConfig {
+export interface ConfigData {
   commonPasswordsNumber: number;
 }
 
 export interface Config {
-  config: AppConfig;
+  data: ConfigData;
 }
 
 export function parseConfig(): Config {
   return {
-    config: {
+    data: {
       commonPasswordsNumber:
         parseInt(process.env.COMMON_PASSWORDS_NUMBER) || 1000,
     },
   };
 }
 
-export function getConfig(configService: ConfigService): AppConfig {
-  return configService.get<AppConfig>('config');
+export function getConfig(configService: ConfigService): ConfigData {
+  return configService.get<ConfigData>('data');
 }
