@@ -1,5 +1,4 @@
-export class Password {
-  id: number;
+export class CreatePasswordDto {
   hash: string;
   salt: string;
   version: number;
