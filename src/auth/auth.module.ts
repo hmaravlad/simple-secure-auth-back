@@ -8,6 +8,8 @@ import { getConfig } from 'src/config/configuration';
 import { AuthQueries } from './auth.queries';
 import { IsUniqueEmailValidator } from './validators/is-unique-email.validator';
 import { HashingModule } from './hashing/hashing.module';
+import { LocalStrategy } from './local.strategy';
+import { LocalSerializer } from './local-serializer';
 
 @Module({
   controllers: [AuthController],
@@ -27,6 +29,8 @@ import { HashingModule } from './hashing/hashing.module';
     },
     IsNotCommonPasswordValidator,
     IsUniqueEmailValidator,
+    LocalSerializer,
+    LocalStrategy,
   ],
   imports: [HashingModule],
 })

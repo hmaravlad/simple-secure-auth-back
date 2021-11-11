@@ -46,6 +46,12 @@ export class AuthService {
     return user;
   }
 
+  async getUserById(id: number): Promise<User> {
+    const user = await this.authQueries.getUserById(id);
+    if (!user) throw new NotFoundException(`No user with this id`);
+    return user;
+  }
+
   logout() {
     return `Logout`;
   }
