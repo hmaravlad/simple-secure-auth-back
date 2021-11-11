@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { getConfig } from 'src/config/configuration';
 import { AuthQueries } from './auth.queries';
 import { IsUniqueEmailValidator } from './validators/is-unique-email.validator';
+import { HashingModule } from './hashing/hashing.module';
 
 @Module({
   controllers: [AuthController],
@@ -27,5 +28,6 @@ import { IsUniqueEmailValidator } from './validators/is-unique-email.validator';
     IsNotCommonPasswordValidator,
     IsUniqueEmailValidator,
   ],
+  imports: [HashingModule],
 })
 export class AuthModule {}

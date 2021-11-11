@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
+import { CreatePasswordDto } from './dto/create-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
@@ -7,8 +8,10 @@ import { User } from './entities/user.entity';
 export class AuthQueries {
   constructor(@InjectKnex() private readonly knex: Knex) {}
 
-  async insertUser(createUserDto: CreateUserDto): Promise<void> {
-    const { password, ...user } = createUserDto;
+  async insertUser(
+    user: CreateUserDto,
+    password: CreatePasswordDto,
+  ): Promise<void> {
     await this.knex.transaction(async (trx) => {
       const id = parseInt(
         (await trx('password').insert(password).returning('id'))[0],
@@ -21,7 +24,7 @@ export class AuthQueries {
     const users = await this.knex('user').select('*').where('id', id);
     const { password_id, ...user } = users[0];
     if (users.length === 0) return undefined;
-    const { id: _, ...password } = await this.knex('password')
+    const password = await this.knex('password')
       .select('*')
       .where('id', password_id)
       .first();
@@ -35,7 +38,7 @@ export class AuthQueries {
     const users = await this.knex('user').select('*').where('email', email);
     if (users.length === 0) return undefined;
     const { password_id, ...user } = users[0];
-    const { id: _, ...password } = await this.knex('password')
+    const password = await this.knex('password')
       .select('*')
       .where('id', password_id)
       .first();
