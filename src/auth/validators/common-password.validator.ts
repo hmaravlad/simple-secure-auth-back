@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   registerDecorator,
 } from 'class-validator';
-import { CommonPasswordsProvider } from './common-passwords.provider';
+import { CommonPasswordsProvider } from '../common-passwords.provider';
 
 @ValidatorConstraint()
 @Injectable()
