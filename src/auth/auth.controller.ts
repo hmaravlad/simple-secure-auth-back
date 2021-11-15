@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Get,
+  HttpCode,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CookieAuthenticationGuard } from './cookie-auth.guard';
 import { LoginDto } from './dto/login.dto';
@@ -16,6 +24,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   @UseGuards(LogInWithCredentialsGuard)
   async login(@Body() loginDto: LoginDto) {
     const { password, ...user } = await this.authService.login(loginDto);
@@ -31,6 +40,7 @@ export class AuthController {
 
   @UseGuards(CookieAuthenticationGuard)
   @Post('logout')
+  @HttpCode(200)
   async logout(@Req() request: RequestWithUser) {
     request.logOut();
     request.session.cookie.maxAge = 0;
