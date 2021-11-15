@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 export interface ConfigData {
   commonPasswordsNumber: number;
   sessionSecret: string;
+  frontendUrl: string;
   db: {
     host: string;
     port: string;
@@ -22,6 +23,7 @@ export function parseConfig(): Config {
       commonPasswordsNumber:
         parseInt(process.env.COMMON_PASSWORDS_NUMBER) || 1000,
       sessionSecret: process.env.SESSION_SECRET,
+      frontendUrl: process.env.FRONTEND_URL,
       db: {
         host: process.env.DB_HOST || '127.0.0.1',
         port: process.env.DB_PORT || '5432',
