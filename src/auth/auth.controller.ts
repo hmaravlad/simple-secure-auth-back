@@ -7,6 +7,7 @@ import {
   Get,
   HttpCode,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { CookieAuthenticationGuard } from './cookie-auth.guard';
 import { LoginDto } from './dto/login.dto';
@@ -26,6 +27,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @UseGuards(LogInWithCredentialsGuard)
+  @UseGuards(ThrottlerGuard)
   async login(@Body() loginDto: LoginDto) {
     const { password, ...user } = await this.authService.login(loginDto);
     return user;

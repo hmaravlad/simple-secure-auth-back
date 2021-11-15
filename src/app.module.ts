@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { KnexModule } from 'nestjs-knex';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -21,6 +22,10 @@ import { getConfig, parseConfig } from './config/configuration';
         },
       }),
       inject: [ConfigService],
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 60 * 60,
+      limit: 10,
     }),
   ],
   controllers: [AppController],
