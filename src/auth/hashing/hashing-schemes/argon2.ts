@@ -4,11 +4,18 @@ import * as crypto from 'crypto';
 import * as argon2 from 'argon2';
 
 export class Argon2Hasher implements Hasher {
+  private options = {
+    parallelism: 1,
+    timeCost: 2,
+    memoryCost: 1024 * 15,
+    type: argon2.argon2id,
+  };
+
   async hash(data: string, salt?: string): Promise<HashResult> {
     if (!salt) salt = crypto.randomBytes(64).toString('hex');
     const hash = await argon2.hash(data, {
       salt: this.getSalt(salt),
-      type: argon2.argon2id,
+      ...this.options,
     });
     return { hash, salt };
   }
@@ -17,7 +24,7 @@ export class Argon2Hasher implements Hasher {
     if (!salt) return false;
     return await argon2.verify(hash, data, {
       salt: this.getSalt(salt),
-      type: argon2.argon2id,
+      ...this.options,
     });
   }
 
