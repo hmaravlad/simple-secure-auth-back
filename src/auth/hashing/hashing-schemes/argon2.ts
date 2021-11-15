@@ -8,6 +8,7 @@ export class Argon2Hasher implements Hasher {
     if (!salt) salt = crypto.randomBytes(64).toString('hex');
     const hash = await argon2.hash(data, {
       salt: this.getSalt(salt),
+      type: argon2.argon2id,
     });
     return { hash, salt };
   }
@@ -16,6 +17,7 @@ export class Argon2Hasher implements Hasher {
     if (!salt) return false;
     return await argon2.verify(hash, data, {
       salt: this.getSalt(salt),
+      type: argon2.argon2id,
     });
   }
 
