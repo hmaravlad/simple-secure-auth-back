@@ -30,7 +30,8 @@ export class AuthService {
 
   async login({ email, password }: LoginDto): Promise<User> {
     const user = await this.authQueries.getUserByEmail(email);
-    if (!user) throw new NotFoundException(`No user with email = ${email}`);
+    if (!user)
+      throw new ForbiddenException('Invalid email and password combination');
     const { hash, salt, version, updatedTo } = user.password;
     const isValid = await this.hashingService.checkPassword(
       password,
@@ -39,7 +40,8 @@ export class AuthService {
       version,
       updatedTo,
     );
-    if (!isValid) throw new ForbiddenException('Invalid password');
+    if (!isValid)
+      throw new ForbiddenException('Invalid email and password combination');
     if (updatedTo !== 0) {
       await this.hashingService.updateHash(password, user.password.id);
     }
