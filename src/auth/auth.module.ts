@@ -10,6 +10,8 @@ import { IsUniqueEmailValidator } from './validators/is-unique-email.validator';
 import { HashingModule } from './hashing/hashing.module';
 import { LocalStrategy } from './local.strategy';
 import { LocalSerializer } from './local-serializer';
+import { EncryptionModule } from './encryption/encryption.module';
+import { EncryptionService } from './encryption/encryption.service';
 
 @Module({
   controllers: [AuthController],
@@ -31,7 +33,8 @@ import { LocalSerializer } from './local-serializer';
     IsUniqueEmailValidator,
     LocalSerializer,
     LocalStrategy,
+    EncryptionService,
   ],
-  imports: [HashingModule],
+  imports: [HashingModule, EncryptionModule],
 })
 export class AuthModule {}
