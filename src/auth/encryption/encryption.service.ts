@@ -1,53 +1,47 @@
+import { buildClient, CommitmentPolicy } from '@aws-crypto/client-node';
+import { KmsKeyringNode } from '@aws-crypto/kms-keyring-node';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { config, Credentials, KMS } from 'aws-sdk';
+import { config, Credentials } from 'aws-sdk';
 import { getConfig } from 'src/config/configuration';
 
 @Injectable()
 export class EncryptionService {
-  private kms: KMS;
   private keyId;
+  private keyring: KmsKeyringNode;
+  private encryptFn;
+  private decryptFn;
 
   constructor(private readonly configService: ConfigService) {
-    const { keyId, ...params } = getConfig(this.configService).aws;
+    const { keyId, additionalKeyId, ...params } = getConfig(
+      this.configService,
+    ).aws;
+    this.keyId = keyId;
     const credentials = new Credentials({
       accessKeyId: params.accessKeyId,
       secretAccessKey: params.accessKey,
     });
+    this.keyring = new KmsKeyringNode({
+      generatorKeyId: this.keyId,
+      keyIds: [this.keyId, additionalKeyId],
+    });
     config.credentials = credentials;
-    this.kms = new KMS(params);
-    this.keyId = keyId;
-  }
-
-  private kmsEncrypt(plaintext: string): Promise<KMS.EncryptResponse> {
-    return new Promise((resolve, reject) => {
-      this.kms.encrypt(
-        { Plaintext: plaintext, KeyId: this.keyId },
-        (err, data) => {
-          if (err) reject(err);
-          resolve(data);
-        },
-      );
-    });
-  }
-
-  private kmsDecrypt(encrypted: string): Promise<KMS.DecryptResponse> {
-    return new Promise((resolve, reject) => {
-      this.kms.decrypt(
-        { CiphertextBlob: Buffer.from(encrypted, 'hex'), KeyId: this.keyId },
-        (err, data) => {
-          if (err) reject(err);
-          resolve(data);
-        },
-      );
-    });
+    const { encrypt, decrypt } = buildClient(
+      CommitmentPolicy.REQUIRE_ENCRYPT_REQUIRE_DECRYPT,
+    );
+    this.encryptFn = encrypt;
+    this.decryptFn = decrypt;
   }
 
   async encrypt(plaintext: string): Promise<string> {
-    return (await this.kmsEncrypt(plaintext)).CiphertextBlob.toString('hex');
+    const res = (await this.encryptFn(this.keyring, plaintext)).result;
+    console.dir({ res });
+    return res.toString('hex');
   }
 
   async decrypt(encrypted: string): Promise<string> {
-    return (await this.kmsDecrypt(encrypted)).Plaintext.toString();
+    return (
+      await this.decryptFn(this.keyring, Buffer.from(encrypted, 'hex'))
+    ).plaintext.toString();
   }
 }

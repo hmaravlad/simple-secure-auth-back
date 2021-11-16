@@ -9,6 +9,7 @@ export interface ConfigData {
     accessKeyId: string;
     accessKey: string;
     keyId: string;
+    additionalKeyId: string;
   };
   db: {
     host: string;
@@ -35,6 +36,7 @@ export function parseConfig(): Config {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         accessKey: process.env.AWS_ACCESS_KEY,
         keyId: process.env.KEY_ID,
+        additionalKeyId: process.env.ADDITIONAL_KEY_ID,
       },
       db: {
         host: process.env.DB_HOST || '127.0.0.1',
