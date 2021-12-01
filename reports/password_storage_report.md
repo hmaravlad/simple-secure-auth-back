@@ -7,6 +7,8 @@ Function crypto.randomBytes() is used for generating salt.
 
 Password hashes are compared with secure functions.
 
+Then hash is encrypted with AES using AWS Encryption SDK.
+
 Also hashing scheme versioning was implemented to make changes in hashing easier. If new version is out old hashes are hashed one more time using new hashing, and if user logs in we replace hash of hash of password with hash of password.
 
 ## Password requirements

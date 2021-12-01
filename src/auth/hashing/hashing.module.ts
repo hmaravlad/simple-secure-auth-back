@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { EncryptionModule } from '../encryption/encryption.module';
+import { EncryptionService } from '../encryption/encryption.service';
 import { HasherFactory } from './hasher-factory';
 import { HashingQueries } from './hashing.queries';
 import { PasswordHashingService } from './hashing.service';
@@ -22,7 +24,9 @@ import { PasswordHashingService } from './hashing.service';
     },
     HasherFactory,
     HashingQueries,
+    EncryptionService,
   ],
   exports: [PasswordHashingService],
+  imports: [EncryptionModule],
 })
 export class HashingModule {}
