@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import passport from 'passport';
 import { HasherFactory } from './hasher-factory';
 import { HashingQueries } from './hashing.queries';
 import { HashResult } from './types/hash-result';
