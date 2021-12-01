@@ -22,8 +22,8 @@ export class AuthQueries {
 
   async getUserById(id: number): Promise<User | undefined> {
     const users = await this.knex('user').select('*').where('id', id);
-    const { password_id, ...user } = users[0];
     if (users.length === 0) return undefined;
+    const { password_id, ...user } = users[0];
     const password = await this.knex('password')
       .select('*')
       .where('id', password_id)
