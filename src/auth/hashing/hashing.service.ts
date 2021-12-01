@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import passport from 'passport';
 import { HasherFactory } from './hasher-factory';
 import { HashingQueries } from './hashing.queries';
 import { HashResult } from './types/hash-result';
@@ -21,14 +22,17 @@ export class PasswordHashingService {
     version: number,
     updatedTo: number,
   ): Promise<boolean> {
-    if (updatedTo === 0) {
+    if (updatedTo === version) {
       return await this.hasherFactory
         .getHasher(version)
         .compare(password, hash, salt);
     } else {
-      const { hash: prevVersionHash } = await this.hasherFactory
-        .getHasher(version)
-        .hash(password, salt);
+      let prevVersionHash = password;
+      for (let i = version; i < updatedTo; i++) {
+        prevVersionHash = (
+          await this.hasherFactory.getHasher(i).hash(prevVersionHash, salt)
+        ).hash;
+      }
       return await this.hasherFactory
         .getHasher(updatedTo)
         .compare(prevVersionHash, hash, salt);
@@ -42,7 +46,7 @@ export class PasswordHashingService {
     await this.hashingQueries.updatePassword(passwordId, {
       hash,
       salt,
-      updatedTo: 0,
+      updatedTo: this.hasherFactory.getLastVersionNumber(),
       version: this.hasherFactory.getLastVersionNumber(),
     });
   }
@@ -51,11 +55,19 @@ export class PasswordHashingService {
     const passwords = await this.hashingQueries.getPasswords();
     const lastVersion = this.hasherFactory.getLastVersionNumber();
     for (const password of passwords) {
-      if (password.version !== lastVersion && password.updatedTo === 0) {
-        const { hash: newHash } = await this.updatePassword(
-          password.hash,
-          password.salt,
-        );
+      if (password.version !== lastVersion) {
+        let newHash = password.hash;
+
+        for (
+          let i = Math.max(password.version, password.updatedTo) + 1;
+          i <= lastVersion;
+          i++
+        ) {
+          newHash = (
+            await this.hasherFactory.getHasher(i).hash(newHash, password.salt)
+          ).hash;
+        }
+
         await this.hashingQueries.updatePassword(password.id, {
           hash: newHash,
           updatedTo: lastVersion,
@@ -66,12 +78,5 @@ export class PasswordHashingService {
 
   getLastVersionNumber(): number {
     return this.hasherFactory.getLastVersionNumber();
-  }
-
-  private async updatePassword(
-    password: string,
-    salt?: string,
-  ): Promise<HashResult> {
-    return this.hasherFactory.getLastVersionHasher().hash(password, salt);
   }
 }

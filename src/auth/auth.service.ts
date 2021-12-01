@@ -22,12 +22,13 @@ export class AuthService {
     const { password, ...user } = registerDto;
     const { hash, salt } = await this.hashingService.hashPassword(password);
     user.phone = await this.encryptionService.encrypt(user.phone);
+    const lastVersion = this.hashingService.getLastVersionNumber();
     await this.authQueries.insertUser(user, {
       hash,
       salt,
       compromised: false,
-      updatedTo: 0,
-      version: this.hashingService.getLastVersionNumber(),
+      updatedTo: lastVersion,
+      version: lastVersion,
     });
   }
 
@@ -46,7 +47,7 @@ export class AuthService {
     );
     if (!isValid)
       throw new ForbiddenException('Invalid email and password combination');
-    if (updatedTo !== 0) {
+    if (updatedTo !== version) {
       await this.hashingService.updateHash(password, user.password.id);
     }
     return user;
