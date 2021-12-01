@@ -10,8 +10,11 @@ Password hashes are compared with secure functions.
 Also hashing scheme versioning was implemented to make changes in hashing easier. If new version is out old hashes are hashed one more time using new hashing, and if user logs in we replace hash of hash of password with hash of password.
 
 ## Password requirements
-- Minimum length - 8
+- Minimum length - 10
 - Maximum length - 64 (i considered using pre-hashing to solve issues maximum length solves, but it is [not recommended](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#pre-hashing-passwords))
+- Should contain at least one english letter
+- Should contain at least one special symbol
+- Should contain at least one number
 - Character set is unlimited
 - Very popular passwords are not allowed
 
