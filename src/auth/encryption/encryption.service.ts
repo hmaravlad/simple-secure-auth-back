@@ -35,7 +35,6 @@ export class EncryptionService {
 
   async encrypt(plaintext: string): Promise<string> {
     const res = (await this.encryptFn(this.keyring, plaintext)).result;
-    console.dir({ res });
     return res.toString('hex');
   }
 
